@@ -1,0 +1,25 @@
+  name: Launch an AWS EC2 Instance
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Launch EC2 instance
+      amazon.aws.ec2_instance:
+        name: "MyAnsibleEC2Instance"
+        key_name: "your-key-pair-name"
+        instance_type: "t2.micro"
+        security_group: "your-security-group"
+        image_id: "ami-0c55b159cbfafe1f0"  # Replace with your desired AMI ID
+        region: "us-east-1"
+        count: 1
+        vpc_subnet_id: "subnet-xxxxxx"  # Replace with your subnet ID
+        wait: yes
+        aws_access_key: "your-aws-access-key"
+        aws_secret_key: "your-aws-secret-key"
+        tags:
+          Environment: "Ansible-Test"
+          Name: "AnsibleEC2"
+      register: ec2_instance
+
+    - name: Display instance details
+      debug:
+        msg: "EC2 Instance {{ ec2_instance.instances[0].id }} created successfully with public IP {{ ec2_instance.instances[0].public_ip_address }}"
